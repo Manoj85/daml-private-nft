@@ -1,0 +1,42 @@
+module UserAdmin where
+
+import Token
+
+template Issuer
+  with
+    userAdmin: Party
+    issuer: Party
+  where
+    signatory userAdmin
+
+    controller issuer can
+      nonconsuming MintToken: ContractId Token
+        with
+          description: Text
+          initialPrice: Decimal
+          currency: Text
+          royaltyRate: Decimal
+        do
+          issued <- getTime 
+          create Token
+            with
+              lastPrice = initialPrice
+              owner = issuer
+              ..
+
+    controller userAdmin can
+      RevokeIssuer: ()
+        do return ()
+
+template IssuerRequest
+  with
+    userAdmin: Party
+    issuer: Party
+    reason: Text
+  where
+    signatory issuer
+
+    controller userAdmin can
+      GrantIssuerRights: ContractId Issuer
+        do
+          create Issuer with ..    
