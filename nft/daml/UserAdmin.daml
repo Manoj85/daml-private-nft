@@ -59,6 +59,14 @@ template Owner
         do
           exercise offerId AcceptToken
 
+      nonconsuming AcceptTokenByKey: (ContractId Token, ContractId Payable, ContractId Payable)
+        with
+          issuer: Party
+          currentOwner: Party
+          description: Text
+        do
+          exerciseByKey @TokenOffer(issuer, currentOwner, description) AcceptToken
+
     controller userAdmin can
       RevokeOwnerRights: ()
         do return ()
@@ -72,7 +80,7 @@ template OwnerRequest
     signatory owner
     
     controller userAdmin can
-      GrantOwnerRights: (ContractId owner)
+      GrantOwnerRights: ContractId Owner
         do
           create Owner with ..
 
