@@ -1,5 +1,7 @@
 module Token where
 
+import Payment
+
 {-
 Content creators can mint NFTs
 Owners can sell their NFTs
@@ -46,11 +48,22 @@ template TokenOffer
     signatory issuer, userAdmin, owner
 
     controller newOwner can
-      AcceptToken: ContractId Token
+      AcceptToken: (ContractId Token, ContractId Payable)
         do
-          create Token
+          fromNewOwnerToOwner <- create Payable
+            with
+              from = newOwner
+              to = owner
+              amount = price
+              currency
+              reference = "Notional for `" <> description <> "`."
+
+
+          newToken <- create Token
             with
               owner = newOwner
               lastPrice = price
               ..
+
+          return (newToken, fromNewOwnerToOwner)
     
