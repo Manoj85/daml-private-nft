@@ -6,6 +6,13 @@ name: nft
 source: daml
 init-script: Main:setup
 version: 0.0.1
+parties:
+  - Alice
+  - Bob
+  - Charlie
+  - UserAdmin
+  - Doug
+  - Ellen
 dependencies:
   - daml-prim
   - daml-stdlib
