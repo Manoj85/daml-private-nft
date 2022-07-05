@@ -1,6 +1,7 @@
 module UserAdmin where
 
 import Token
+import Payment
 
 template Issuer
   with
@@ -39,4 +40,41 @@ template IssuerRequest
     controller userAdmin can
       GrantIssuerRights: ContractId Issuer
         do
-          create Issuer with ..    
+          create Issuer with ..
+
+      RejectIssuerRequest: ()
+        do return ()
+
+template Owner
+  with
+    userAdmin: Party
+    owner: Party
+  where
+    signatory userAdmin
+    
+    controller owner can
+      nonconsuming AcceptTokenAsNewOwner: (ContractId Token, ContractId Payable, ContractId Payable)
+        with
+          offerId: ContractId TokenOffer
+        do
+          exercise offerId AcceptToken
+
+    controller userAdmin can
+      RevokeOwnerRights: ()
+        do return ()
+
+template OwnerRequest
+  with
+    userAdmin: Party
+    owner: Party
+    reason: Text
+  where
+    signatory owner
+    
+    controller userAdmin can
+      GrantOwnerRights: (ContractId owner)
+        do
+          create Owner with ..
+
+      RejectOwnerRequest: ()
+        do return ()
